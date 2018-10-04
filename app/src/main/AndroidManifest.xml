@@ -19,7 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".databindingrecyclerview.RecyclerViewActivity" />
+        <activity
+            android:name=".databindingrecyclerview.RecyclerViewActivity"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".customview.CustomViewActivity" />
         <activity android:name=".customview.TagViewActivity" />
     </application>

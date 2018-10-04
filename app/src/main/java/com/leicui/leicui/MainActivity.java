@@ -3,11 +3,14 @@ package com.leicui.leicui;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -90,6 +93,23 @@ public class MainActivity extends AppCompatActivity {
   public void clickTag(View view) {
     Intent intent = new Intent(this, TagViewActivity.class);
     startActivity(intent);
+  }
+
+  @OnClick(R.id.handler)
+  public void clickHandler(View view) {
+    HandlerThread longPollThread = new HandlerThread("LongPollThread");
+    longPollThread.start();
+    Handler longPollHandler =
+        new Handler(
+            longPollThread.getLooper(),
+            new Handler.Callback() {
+              @Override
+              public boolean handleMessage(Message msg) {
+                Snackbar.make(mBottomSheet, "msg: " + msg, Snackbar.LENGTH_LONG).show();
+                return false;
+              }
+            });
+    longPollHandler.sendEmptyMessage(101);
   }
 
   @Override
