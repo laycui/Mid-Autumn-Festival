@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.leicui.leicui.customview.CustomViewActivity;
+import com.leicui.leicui.customview.PagerActivity;
 import com.leicui.leicui.customview.TagViewActivity;
 import com.leicui.leicui.dagger.MyExample;
 import com.leicui.leicui.databindingrecyclerview.RecyclerViewActivity;
@@ -97,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
 
   @OnClick(R.id.handler)
   public void clickHandler(View view) {
+    startActivity(new Intent(this, PagerActivity.class));
+
     HandlerThread longPollThread = new HandlerThread("LongPollThread");
     longPollThread.start();
     Handler longPollHandler =
