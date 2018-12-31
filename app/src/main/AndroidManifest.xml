@@ -25,8 +25,14 @@
         <activity android:name=".customview.CustomViewActivity" />
         <activity android:name=".customview.TagViewActivity" />
         <activity
+            android:name=".customview.FloodFillActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".customview.ScrollActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".customview.PagerActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

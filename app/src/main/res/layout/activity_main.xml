@@ -59,6 +59,21 @@
         app:layout_constraintStart_toStartOf="@id/message"
         app:layout_constraintTop_toBottomOf="@id/buttons" />
 
+    <Button
+        android:id="@+id/flood_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="flood"
+        app:layout_constraintTop_toBottomOf="@id/date_text"/>
+
+    <Button
+        android:id="@+id/scroll_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scroll"
+        app:layout_constraintStart_toEndOf="@id/flood_btn"
+        app:layout_constraintTop_toBottomOf="@id/date_text"/>
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

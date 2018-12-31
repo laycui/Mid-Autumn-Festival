@@ -7,17 +7,21 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.leicui.leicui.customview.CustomViewActivity;
+import com.leicui.leicui.customview.FloodFillActivity;
 import com.leicui.leicui.customview.PagerActivity;
+import com.leicui.leicui.customview.ScrollActivity;
 import com.leicui.leicui.customview.TagViewActivity;
 import com.leicui.leicui.dagger.MyExample;
 import com.leicui.leicui.databindingrecyclerview.RecyclerViewActivity;
@@ -38,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
 
   @BindView(R.id.touch_outside)
   View mTouchOutside;
+
+  @BindView(R.id.container)
+  ConstraintLayout mContainer;
 
   private BottomSheetBehavior mBottomSheetBehavior;
 
@@ -76,6 +83,26 @@ public class MainActivity extends AppCompatActivity {
     textView.setText(String.valueOf(mMyExample.getDate()));
 
     initBottomSheetBehavior();
+
+    Button mFloodButton = findViewById(R.id.flood_btn);
+    mFloodButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Intent intent = new Intent(MainActivity.this, FloodFillActivity.class);
+            startActivity(intent);
+          }
+        });
+
+    Button scrollButton = findViewById(R.id.scroll_btn);
+    scrollButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Intent intent = new Intent(MainActivity.this, ScrollActivity.class);
+            startActivity(intent);
+          }
+        });
   }
 
   @OnClick(R.id.to_recycler_view)
@@ -108,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             new Handler.Callback() {
               @Override
               public boolean handleMessage(Message msg) {
-                Snackbar.make(mBottomSheet, "msg: " + msg, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mContainer, "msg: " + msg, Snackbar.LENGTH_LONG).show();
                 return false;
               }
             });

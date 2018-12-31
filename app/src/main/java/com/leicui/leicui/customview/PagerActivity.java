@@ -46,6 +46,7 @@ public class PagerActivity extends AppCompatActivity {
             return String.valueOf(position);
           }
         });
+    mViewPager.setOffscreenPageLimit(3);
     mViewPager.setCurrentItem(2);
   }
 }
