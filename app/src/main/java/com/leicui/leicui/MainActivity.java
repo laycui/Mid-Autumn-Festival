@@ -12,14 +12,17 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.leicui.leicui.customview.CustomViewActivity;
 import com.leicui.leicui.customview.FloodFillActivity;
+import com.leicui.leicui.customview.NestedActivity;
 import com.leicui.leicui.customview.PagerActivity;
 import com.leicui.leicui.customview.ScrollActivity;
 import com.leicui.leicui.customview.TagViewActivity;
@@ -84,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
 
     initBottomSheetBehavior();
 
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_launcher_foreground);
+
     Button mFloodButton = findViewById(R.id.flood_btn);
     mFloodButton.setOnClickListener(
         new View.OnClickListener() {
@@ -103,6 +109,24 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
           }
         });
+
+    Button nestedButton = findViewById(R.id.nest_recycler_btn);
+    nestedButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(MainActivity.this, NestedActivity.class);
+        startActivity(intent);
+      }
+    });
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+
+    if (item.getItemId() == android.R.id.home) {
+      Toast.makeText(this, "Hmm", Toast.LENGTH_SHORT).show();
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @OnClick(R.id.to_recycler_view)

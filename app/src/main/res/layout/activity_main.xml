@@ -74,6 +74,14 @@
         app:layout_constraintStart_toEndOf="@id/flood_btn"
         app:layout_constraintTop_toBottomOf="@id/date_text"/>
 
+    <Button
+        android:id="@+id/nest_recycler_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nested"
+        app:layout_constraintStart_toEndOf="@id/scroll_btn"
+        app:layout_constraintTop_toBottomOf="@id/date_text"/>
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
