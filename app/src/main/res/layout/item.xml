@@ -8,9 +8,12 @@
             type="String" />
     </data>
 
-    <TextView
+    <Button
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@{item}" />
+        android:backgroundTint="#6264A7"
+        android:text="@{item}"
+        android:textAllCaps="false"
+        android:textColor="@color/cardview_light_background" />
 </layout>

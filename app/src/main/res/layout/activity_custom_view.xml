@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.leicui.leicui.customview.TitleLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:title_text_color="#f0f" />
+    android:orientation="vertical">
+
+    <com.leicui.leicui.customview.TitleLayout
+        android:id="@+id/title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title_text_color="#f0f" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Custom"
+        android:transitionName="button_trans" />
+</LinearLayout>

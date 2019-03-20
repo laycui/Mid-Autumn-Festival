@@ -37,6 +37,7 @@
             android:id="@+id/to_custom_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:transitionName="button_trans"
             android:text="Custom" />
 
         <Button
@@ -64,6 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="flood"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/date_text"/>
 
     <Button

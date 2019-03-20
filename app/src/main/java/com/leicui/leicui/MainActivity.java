@@ -1,5 +1,6 @@
 package com.leicui.leicui;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -11,14 +12,16 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
+import android.support.transition.Slide;
+import android.support.transition.TransitionManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.leicui.leicui.customview.CustomViewActivity;
 import com.leicui.leicui.customview.FloodFillActivity;
@@ -49,9 +52,15 @@ public class MainActivity extends AppCompatActivity {
   @BindView(R.id.container)
   ConstraintLayout mContainer;
 
+  @BindView(R.id.to_custom_view)
+  Button mButtonCustomView;
+
   private BottomSheetBehavior mBottomSheetBehavior;
 
   @Inject MyExample mMyExample;
+
+  @BindView(R.id.navigation)
+  BottomNavigationView mNavigationView;
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener =
       (item) -> {
@@ -77,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
     ButterKnife.bind(this);
 
     mTextMessage = findViewById(R.id.message);
-    BottomNavigationView navigation = findViewById(R.id.navigation);
-    navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     // Dagger:
     ((MyApplication) getApplication()).getMyComponent().inject(this);
@@ -122,9 +130,15 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-
     if (item.getItemId() == android.R.id.home) {
-      Toast.makeText(this, "Hmm", Toast.LENGTH_SHORT).show();
+      Slide slide = new Slide();
+      slide.setSlideEdge(Gravity.START);
+      TransitionManager.beginDelayedTransition(mContainer, slide);
+      if (mNavigationView.getVisibility() == View.VISIBLE) {
+        mNavigationView.setVisibility(View.INVISIBLE);
+      } else {
+        mNavigationView.setVisibility(View.VISIBLE);
+      }
     }
     return super.onOptionsItemSelected(item);
   }
@@ -137,14 +151,21 @@ public class MainActivity extends AppCompatActivity {
 
   @OnClick(R.id.to_custom_view)
   public void clickCustomView(View view) {
+    Bundle bundle =
+        ActivityOptions.makeSceneTransitionAnimation(
+                this, mButtonCustomView, mButtonCustomView.getTransitionName())
+            .toBundle();
+
     Intent intent = new Intent(this, CustomViewActivity.class);
-    startActivity(intent);
+    startActivity(intent, bundle);
   }
 
   @OnClick(R.id.tag)
   public void clickTag(View view) {
+    Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+
     Intent intent = new Intent(this, TagViewActivity.class);
-    startActivity(intent);
+    startActivity(intent, bundle);
   }
 
   @OnClick(R.id.handler)
