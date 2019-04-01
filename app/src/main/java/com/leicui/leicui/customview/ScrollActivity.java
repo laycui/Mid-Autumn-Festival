@@ -2,10 +2,12 @@ package com.leicui.leicui.customview;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,93 +20,66 @@ import java.util.List;
 
 public class ScrollActivity extends AppCompatActivity {
 
-  private List<String> mList;
-  private LinearLayoutManager layoutManager;
-  private MyAdapter mMyAdapter;
-  private RecyclerView recyclerView;
-  private Handler mMainHandler;
-  private boolean mIsLoading = false;
-  private int mGroupNumber = 0;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_flood_fill);
-    mMainHandler = new Handler(getMainLooper());
 
-    mList = new ArrayList<>();
-    addItems();
-
-    recyclerView = findViewById(R.id.recycler_view);
-    layoutManager = new LinearLayoutManager(this);
-    mMyAdapter = new MyAdapter();
+    RecyclerView recyclerView = findViewById(R.id.recycler_view);
+    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+    MyAdapter mMyAdapter = new MyAdapter();
     recyclerView.setAdapter(mMyAdapter);
     recyclerView.setLayoutManager(layoutManager);
 
+    mMyAdapter.queueTask();
     recyclerView.addOnScrollListener(
         new RecyclerView.OnScrollListener() {
           @Override
-          public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-          }
-
-          @Override
-          public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
+          public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             int visibleItemCount = layoutManager.getChildCount();
             int totalItemCount = layoutManager.getItemCount(); // == mMyAdapter.getItemCount();
             int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-
-            if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 2
-                && !mIsLoading) {
-              mIsLoading = true;
-              mList.add("");                                  // Fake data for footer progress spinner
-              mMyAdapter.notifyDataSetChanged();
-              mMainHandler.postDelayed(
-                  new Runnable() {
-                    @Override
-                    public void run() {
-                      mList.remove(mList.size() - 1);
-                      addItems();
-                      mIsLoading = false;
-                      mMyAdapter.notifyDataSetChanged();
-                    }
-                  },
-                  3000);
+            if (firstVisibleItemPosition + visibleItemCount > totalItemCount - 2) {
+              mMyAdapter.queueTask();
             }
           }
         });
   }
 
-  private void addItems() {
-    for (int i = 0; i < 20; i++) {
-      mList.add("Hello Lei - " + mGroupNumber + " - " + i);
-    }
-    mGroupNumber++;
-  }
+  static class MyAdapter extends RecyclerView.Adapter<BaseHolder> {
 
-  class MyAdapter extends RecyclerView.Adapter<BaseHolder> {
+    private Handler mMainHandler;
+    private List<Item> mList;
+    private boolean mIsLoading;
+    private int mGroupNumber = 0;
+
+    MyAdapter() {
+      mList = new ArrayList<>();
+      mMainHandler = new Handler();
+    }
 
     @NonNull
     @Override
-    public BaseHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-      if (viewType == 0) {
-        View view = getLayoutInflater().inflate(R.layout.item_scroll_text, viewGroup, false);
-        return new ItemHolder(view);
-      } else if (viewType == 1) {
-        View view = getLayoutInflater().inflate(R.layout.item_scroll_header, viewGroup, false);
-        return new HeaderHolder(view);
-      } else {
-        View view =
-            getLayoutInflater().inflate(R.layout.item_scroll_progress_bar, viewGroup, false);
-        return new FooterHolder(view);
+    public BaseHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+      View view;
+      LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+      switch (viewType) {
+        case ViewType.HEADER:
+          view = layoutInflater.inflate(R.layout.item_scroll_header, parent, false);
+          return new HeaderHolder(view);
+        case ViewType.ITEM:
+          view = layoutInflater.inflate(R.layout.item_scroll_text, parent, false);
+          return new ItemHolder(view);
+        case ViewType.LOADING:
+        default:
+          view = layoutInflater.inflate(R.layout.item_scroll_progress_bar, parent, false);
+          return new LoadingHolder(view);
       }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BaseHolder holder, int i) {
-      holder.bind(mList.get(i));
+    public void onBindViewHolder(@NonNull BaseHolder holder, int position) {
+      holder.bind(mList.get(position));
     }
 
     @Override
@@ -114,71 +89,101 @@ public class ScrollActivity extends AppCompatActivity {
 
     @Override
     public int getItemViewType(int position) {
-      if (position == mList.size() - 1) {
-        return 2;
+      return mList.get(position).mType;
+    }
+
+    void queueTask() {
+      if (mIsLoading) {
+        return;
       }
-      if (position % 20 == 0) {
-        return 1;
+      mIsLoading = true;
+      if (!mList.isEmpty()) {
+        mList.add(new Item(null, ViewType.LOADING));
       }
-      return 0;
+      notifyDataSetChanged();
+      mMainHandler.postDelayed(
+          () -> {
+            List<Item> list = new ArrayList<>();
+            for (int i = 0; i < 20; i++) {
+              int num = i + 1;
+              list.add(new Item("Item " + num, ViewType.ITEM));
+            }
+            addItems(list);
+          },
+          1000);
+    }
+
+    void addItems(List<Item> items) {
+      if (!mList.isEmpty()) {
+        mList.remove(mList.size() - 1);
+      }
+      mIsLoading = false;
+      mList.add(new Item("Header - " + mGroupNumber++, ViewType.HEADER));
+      mList.addAll(items);
+      notifyDataSetChanged();
     }
   }
 
-  abstract class BaseHolder extends RecyclerView.ViewHolder {
-
-    BaseHolder(@NonNull View itemView) {
+  abstract static class BaseHolder extends RecyclerView.ViewHolder {
+    BaseHolder(View itemView) {
       super(itemView);
     }
 
-    public abstract void bind(String str);
+    abstract void bind(Item item);
   }
 
-  class ItemHolder extends BaseHolder {
+  static class HeaderHolder extends BaseHolder {
+    Button mButton;
 
-    private TextView mTextView;
+    HeaderHolder(View itemView) {
+      super(itemView);
+      mButton = itemView.findViewById(R.id.button);
+    }
 
-    ItemHolder(@NonNull View itemView) {
+    @Override
+    void bind(Item item) {
+      mButton.setText(item.mName);
+    }
+  }
+
+  static class ItemHolder extends BaseHolder {
+    TextView mTextView;
+
+    ItemHolder(View itemView) {
       super(itemView);
       mTextView = itemView.findViewById(R.id.item_text);
     }
 
     @Override
-    public void bind(String str) {
-      mTextView.setText(str);
+    void bind(Item item) {
+      mTextView.setText(item.mName);
     }
   }
 
-  class HeaderHolder extends BaseHolder {
+  static class LoadingHolder extends BaseHolder {
 
-    private Button mButton;
-
-    HeaderHolder(@NonNull View itemView) {
-      super(itemView);
-      mButton = itemView.findViewById(R.id.button);
-      mButton.setOnClickListener(
-          new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              mList.remove(1);
-              mMyAdapter.notifyItemRemoved(1);
-              mMyAdapter.notifyItemMoved(1, 3);
-            }
-          });
-    }
-
-    @Override
-    public void bind(String str) {
-      mButton.setText(str);
-    }
-  }
-
-  class FooterHolder extends BaseHolder {
-
-    FooterHolder(@NonNull View itemView) {
+    LoadingHolder(View itemView) {
       super(itemView);
     }
 
     @Override
-    public void bind(String str) {}
+    void bind(Item item) {}
+  }
+
+  static class Item {
+    private String mName;
+    private @ViewType int mType;
+
+    Item(String name, int type) {
+      mName = name;
+      mType = type;
+    }
+  }
+
+  @IntDef(value = {ViewType.HEADER, ViewType.ITEM, ViewType.LOADING})
+  @interface ViewType {
+    int HEADER = 0;
+    int ITEM = 1;
+    int LOADING = 2;
   }
 }

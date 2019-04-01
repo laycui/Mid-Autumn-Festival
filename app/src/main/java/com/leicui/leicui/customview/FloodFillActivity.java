@@ -14,35 +14,13 @@ import com.leicui.leicui.R;
 
 public class FloodFillActivity extends AppCompatActivity {
 
-  private boolean[][] grid;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_flood_fill);
 
-    grid = new boolean[20][20];
-
-    for (int i = 0; i < 5; i++) {
-      grid[i][0] = true;
-    }
-    for (int j = 3; j < 20; j++) {
-      grid[0][j] = true;
-    }
-    for (int i = 0; i < 20; i++) {
-      grid[i][9] = true;
-    }
-    for (int j = 0; j < 20; j++) {
-      grid[9][j] = true;
-    }
-    for (int i = 17; i < 20; i++) {
-      for (int j = 18; j < 20; j++) {
-        grid[i][j] = true;
-      }
-    }
-
     RecyclerView recyclerView = findViewById(R.id.recycler_view);
-    MyAdapter myAdapter = new MyAdapter(grid);
+    MyAdapter myAdapter = new MyAdapter();
 
     recyclerView.setAdapter(myAdapter);
     recyclerView.setLayoutManager(new GridLayoutManager(this, 20));
@@ -52,8 +30,26 @@ public class FloodFillActivity extends AppCompatActivity {
 
     private boolean[][] mGrid;
 
-    MyAdapter(boolean[][] grid) {
-      mGrid = grid;
+    MyAdapter() {
+      mGrid = new boolean[20][20];
+
+      for (int i = 0; i < 5; i++) {
+        mGrid[i][0] = true;
+      }
+      for (int j = 3; j < 20; j++) {
+        mGrid[0][j] = true;
+      }
+      for (int i = 0; i < 20; i++) {
+        mGrid[i][9] = true;
+      }
+      for (int j = 0; j < 20; j++) {
+        mGrid[9][j] = true;
+      }
+      for (int i = 17; i < 20; i++) {
+        for (int j = 18; j < 20; j++) {
+          mGrid[i][j] = true;
+        }
+      }
     }
 
     @NonNull

@@ -105,7 +105,7 @@ public class NestedActivity extends AppCompatActivity {
     @Override
     void bind(String text) {
       if ("1".equals(text)) {
-        mSubRecyclerView.scrollToPosition(mSubRecyclerView.getAdapter().getItemCount() - 1);
+        mSubRecyclerView.smoothScrollToPosition(mSubRecyclerView.getAdapter().getItemCount() - 1);
       } else {
         mSubRecyclerView.scrollToPosition(0);
       }
