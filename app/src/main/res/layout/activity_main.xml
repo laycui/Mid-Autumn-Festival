@@ -7,82 +7,83 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/title_home"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/buttons"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/message">
+        android:layout_height="0dp"
+        android:paddingBottom="40dp"
+        app:layout_constraintBottom_toTopOf="@id/navigation"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/to_recycler_view"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="RecyclerView" />
+            android:orientation="vertical"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/to_custom_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:transitionName="button_trans"
-            android:text="Custom" />
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/activity_vertical_margin"
+                android:text="@string/title_home" />
 
-        <Button
-            android:id="@+id/tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tag" />
+            <Button
+                android:id="@+id/to_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tartaka RecyclerView" />
 
-        <Button
-            android:id="@+id/handler"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Handler" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/to_custom_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Custom"
+                android:transitionName="button_trans" />
 
-    <TextView
-        android:id="@+id/date_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/message"
-        app:layout_constraintTop_toBottomOf="@id/buttons" />
+            <Button
+                android:id="@+id/tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tag" />
 
-    <Button
-        android:id="@+id/flood_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="flood"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/date_text"/>
+            <Button
+                android:id="@+id/handler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tab Layout" />
 
-    <Button
-        android:id="@+id/scroll_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Scroll"
-        app:layout_constraintStart_toEndOf="@id/flood_btn"
-        app:layout_constraintTop_toBottomOf="@id/date_text"/>
+            <Button
+                android:id="@+id/flood_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="flood fill" />
 
-    <Button
-        android:id="@+id/nest_recycler_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nested"
-        app:layout_constraintStart_toEndOf="@id/scroll_btn"
-        app:layout_constraintTop_toBottomOf="@id/date_text"/>
+            <Button
+                android:id="@+id/scroll_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Scroll" />
+
+            <Button
+                android:id="@+id/nest_recycler_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nested RecyclerView" />
+
+            <TextView
+                android:id="@+id/date_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/activity_vertical_margin"
+                app:layout_constraintTop_toBottomOf="@id/buttons" />
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -91,11 +92,11 @@
 
         <View
             android:id="@+id/touch_outside"
-            android:background="#80000000"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#80000000"
             android:importantForAccessibility="no"
-            tools:ignore="UnusedAttribute"/>
+            tools:ignore="UnusedAttribute" />
 
         <LinearLayout
             android:id="@+id/bottom_sheet"
@@ -111,11 +112,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:gravity="center_horizontal"
-                android:textColor="#fff"
-                android:textStyle="bold"
                 android:layout_marginTop="10dp"
-                android:text="Drag Me" />
+                android:gravity="center_horizontal"
+                android:text="Drag Me"
+                android:textColor="#fff"
+                android:textStyle="bold" />
 
             <Button
                 android:layout_width="match_parent"
@@ -133,14 +134,10 @@
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
         android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/navigation" />
 
 </android.support.constraint.ConstraintLayout>
