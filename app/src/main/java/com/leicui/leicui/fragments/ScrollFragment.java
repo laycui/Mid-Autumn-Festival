@@ -1,10 +1,11 @@
-package com.leicui.leicui.customview;
+package com.leicui.leicui.fragments;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,15 +19,14 @@ import com.leicui.leicui.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScrollActivity extends AppCompatActivity {
+public class ScrollFragment extends Fragment {
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_flood_fill);
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
 
-    RecyclerView recyclerView = findViewById(R.id.recycler_view);
-    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+    RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
     MyAdapter mMyAdapter = new MyAdapter();
     recyclerView.setAdapter(mMyAdapter);
     recyclerView.setLayoutManager(layoutManager);
@@ -44,6 +44,15 @@ public class ScrollActivity extends AppCompatActivity {
             }
           }
         });
+  }
+
+  @Nullable
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater,
+      @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.activity_flood_fill, container, false);
   }
 
   static class MyAdapter extends RecyclerView.Adapter<BaseHolder> {

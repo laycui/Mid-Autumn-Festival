@@ -1,63 +1,35 @@
 package com.leicui.leicui;
 
-import android.app.ActivityOptions;
-import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.Snackbar;
 import android.support.transition.Slide;
 import android.support.transition.TransitionManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.leicui.leicui.customview.CustomViewActivity;
-import com.leicui.leicui.customview.FloodFillActivity;
-import com.leicui.leicui.customview.NestedActivity;
-import com.leicui.leicui.customview.PagerActivity;
-import com.leicui.leicui.customview.ScrollActivity;
-import com.leicui.leicui.customview.TagViewActivity;
-import com.leicui.leicui.dagger.MyExample;
-import com.leicui.leicui.databindingrecyclerview.RecyclerViewActivity;
-
-import javax.inject.Inject;
+import com.leicui.leicui.fragments.FloodFillFragment;
+import com.leicui.leicui.fragments.MainFragment;
+import com.leicui.leicui.fragments.ScrollFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-
-  @BindView(R.id.message)
-  TextView mTextMessage;
-
-  @BindView(R.id.bottom_sheet)
-  LinearLayout mBottomSheet;
-
-  @BindView(R.id.touch_outside)
-  View mTouchOutside;
 
   @BindView(R.id.container)
   ConstraintLayout mContainer;
 
-  @BindView(R.id.to_custom_view)
-  Button mButtonCustomView;
+  @BindView(R.id.view_pager)
+  ViewPager mViewPager;
 
-  private BottomSheetBehavior mBottomSheetBehavior;
-
-  @Inject MyExample mMyExample;
+  private MainFragment mMainFragment;
 
   @BindView(R.id.navigation)
   BottomNavigationView mNavigationView;
@@ -66,13 +38,13 @@ public class MainActivity extends AppCompatActivity {
       (item) -> {
         switch (item.getItemId()) {
           case R.id.navigation_home:
-            mTextMessage.setText(R.string.title_home);
+            mViewPager.setCurrentItem(0, true);
             return true;
           case R.id.navigation_dashboard:
-            mTextMessage.setText(R.string.title_dashboard);
+            mViewPager.setCurrentItem(1, true);
             return true;
           case R.id.navigation_notifications:
-            mTextMessage.setText(R.string.title_notifications);
+            mViewPager.setCurrentItem(2, true);
             return true;
         }
         return false;
@@ -85,47 +57,61 @@ public class MainActivity extends AppCompatActivity {
     // ButterKnife
     ButterKnife.bind(this);
 
-    mTextMessage = findViewById(R.id.message);
     mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-    // Dagger:
-    ((MyApplication) getApplication()).getMyComponent().inject(this);
-    TextView textView = findViewById(R.id.date_text);
-    textView.setText(String.valueOf(mMyExample.getDate()));
-
-    initBottomSheetBehavior();
 
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_launcher_foreground);
 
-    Button mFloodButton = findViewById(R.id.flood_btn);
-    mFloodButton.setOnClickListener(
-        new View.OnClickListener() {
+    FragmentPagerAdapter pagerAdapter =
+        new FragmentPagerAdapter(getSupportFragmentManager()) {
           @Override
-          public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this, FloodFillActivity.class);
-            startActivity(intent);
+          public Fragment getItem(int position) {
+            switch (position) {
+              case 0:
+                mMainFragment = new MainFragment();
+                return mMainFragment;
+              case 1:
+                return new ScrollFragment();
+              case 2:
+              default:
+                return new FloodFillFragment();
+            }
           }
-        });
 
-    Button scrollButton = findViewById(R.id.scroll_btn);
-    scrollButton.setOnClickListener(
-        new View.OnClickListener() {
           @Override
-          public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this, ScrollActivity.class);
-            startActivity(intent);
+          public int getCount() {
+            return 3;
           }
-        });
+        };
 
-    Button nestedButton = findViewById(R.id.nest_recycler_btn);
-    nestedButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Intent intent = new Intent(MainActivity.this, NestedActivity.class);
-        startActivity(intent);
-      }
-    });
+    mViewPager.setAdapter(pagerAdapter);
+    mViewPager.addOnPageChangeListener(
+        new ViewPager.OnPageChangeListener() {
+          @Override
+          public void onPageScrolled(
+              int position, float positionOffset, int positionOffsetPixels) {}
+
+          @Override
+          public void onPageSelected(int position) {
+            mNavigationView.setSelectedItemId(positionToNavigationMenuId(position));
+          }
+
+          @Override
+          public void onPageScrollStateChanged(int state) {}
+        });
+    mViewPager.setOffscreenPageLimit(4);
+  }
+
+  private int positionToNavigationMenuId(int position) {
+    switch (position) {
+      case 0:
+        return R.id.navigation_home;
+      case 1:
+        return R.id.navigation_dashboard;
+      case 2:
+      default:
+        return R.id.navigation_notifications;
+    }
   }
 
   @Override
@@ -143,91 +129,20 @@ public class MainActivity extends AppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  @OnClick(R.id.to_recycler_view)
-  public void clickRecyclerViewButton(View view) {
-    Intent intent = new Intent(this, RecyclerViewActivity.class);
-    startActivity(intent);
-  }
-
-  @OnClick(R.id.to_custom_view)
-  public void clickCustomView(View view) {
-    Bundle bundle =
-        ActivityOptions.makeSceneTransitionAnimation(
-                this, mButtonCustomView, mButtonCustomView.getTransitionName())
-            .toBundle();
-
-    Intent intent = new Intent(this, CustomViewActivity.class);
-    startActivity(intent, bundle);
-  }
-
-  @OnClick(R.id.tag)
-  public void clickTag(View view) {
-    Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
-
-    Intent intent = new Intent(this, TagViewActivity.class);
-    startActivity(intent, bundle);
-  }
-
-  @OnClick(R.id.handler)
-  public void clickHandler(View view) {
-    startActivity(new Intent(this, PagerActivity.class));
-
-    HandlerThread longPollThread = new HandlerThread("LongPollThread");
-    longPollThread.start();
-    Handler longPollHandler =
-        new Handler(
-            longPollThread.getLooper(),
-            new Handler.Callback() {
-              @Override
-              public boolean handleMessage(Message msg) {
-                Snackbar.make(mContainer, "msg: " + msg, Snackbar.LENGTH_LONG).show();
-                return false;
-              }
-            });
-    longPollHandler.sendEmptyMessage(101);
-  }
-
   @Override
   public boolean dispatchTouchEvent(MotionEvent event) {
-    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-      if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-        Rect outRect = new Rect();
-        mBottomSheet.getGlobalVisibleRect(outRect);
-
-        if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-          mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-          return true;
-        }
-      }
+    if (mMainFragment != null && mMainFragment.dispatchTouchEvent(event)) {
+      return true;
     }
 
     return super.dispatchTouchEvent(event);
   }
 
-  private void initBottomSheetBehavior() {
-    mBottomSheet = findViewById(R.id.bottom_sheet);
-    mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
-    assert (mBottomSheetBehavior != null);
-    mTouchOutside.setAlpha(0f);
-    mBottomSheetBehavior.setBottomSheetCallback(
-        new BottomSheetBehavior.BottomSheetCallback() {
-          @Override
-          public void onStateChanged(@NonNull View bottomSheet, int newState) {
-          }
-
-          @Override
-          public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-            mTouchOutside.setAlpha(slideOffset);
-          }
-        });
-  }
-
   @Override
   public void onBackPressed() {
-    if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
-      mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-    } else {
-      super.onBackPressed();
+    if (mMainFragment != null && mMainFragment.onBackPressed()) {
+      return;
     }
+    super.onBackPressed();
   }
 }

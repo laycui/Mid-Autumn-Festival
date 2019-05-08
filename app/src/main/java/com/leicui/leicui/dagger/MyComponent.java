@@ -1,6 +1,6 @@
 package com.leicui.leicui.dagger;
 
-import com.leicui.leicui.MainActivity;
+import com.leicui.leicui.fragments.MainFragment;
 
 import javax.inject.Singleton;
 
@@ -10,5 +10,5 @@ import dagger.Component;
 @Component(modules = MyModule.class)
 public interface MyComponent {
 
-    void inject(MainActivity mainActivity);
+  void inject(MainFragment mainFragment);
 }

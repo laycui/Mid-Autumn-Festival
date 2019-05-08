@@ -1,9 +1,10 @@
-package com.leicui.leicui.customview;
+package com.leicui.leicui.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,18 +13,26 @@ import android.view.ViewGroup;
 
 import com.leicui.leicui.R;
 
-public class FloodFillActivity extends AppCompatActivity {
+public class FloodFillFragment extends Fragment {
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_flood_fill);
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
 
-    RecyclerView recyclerView = findViewById(R.id.recycler_view);
+    RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
     MyAdapter myAdapter = new MyAdapter();
 
     recyclerView.setAdapter(myAdapter);
-    recyclerView.setLayoutManager(new GridLayoutManager(this, 20));
+    recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 20));
+  }
+
+  @Nullable
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater,
+      @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.activity_flood_fill, container, false);
   }
 
   private static class MyAdapter extends RecyclerView.Adapter<GridViewHolder> {
@@ -33,22 +42,11 @@ public class FloodFillActivity extends AppCompatActivity {
     MyAdapter() {
       mGrid = new boolean[20][20];
 
-      for (int i = 0; i < 5; i++) {
-        mGrid[i][0] = true;
-      }
-      for (int j = 3; j < 20; j++) {
-        mGrid[0][j] = true;
-      }
       for (int i = 0; i < 20; i++) {
         mGrid[i][9] = true;
       }
       for (int j = 0; j < 20; j++) {
         mGrid[9][j] = true;
-      }
-      for (int i = 17; i < 20; i++) {
-        for (int j = 18; j < 20; j++) {
-          mGrid[i][j] = true;
-        }
       }
     }
 
