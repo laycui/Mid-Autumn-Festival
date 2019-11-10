@@ -10,10 +10,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.leicui.leicui.customview.NonSwipeableViewPager;
 import com.leicui.leicui.fragments.FloodFillFragment;
 import com.leicui.leicui.fragments.MainFragment;
 import com.leicui.leicui.fragments.ScrollFragment;
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
   ConstraintLayout mContainer;
 
   @BindView(R.id.view_pager)
-  ViewPager mViewPager;
+  NonSwipeableViewPager mViewPager;
 
   private MainFragment mMainFragment;
 
@@ -115,6 +117,14 @@ public class MainActivity extends AppCompatActivity {
   }
 
   @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.main_menu, menu);
+    MenuItem menuSwipe = menu.findItem(R.id.swipe);
+    menuSwipe.setTitle(mViewPager.isSwipingEnabled() ? "Disable Swipe" : "Enable Swipe");
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == android.R.id.home) {
       Slide slide = new Slide();
@@ -125,6 +135,9 @@ public class MainActivity extends AppCompatActivity {
       } else {
         mNavigationView.setVisibility(View.VISIBLE);
       }
+    } else if (item.getItemId() == R.id.swipe) {
+      mViewPager.setSwipingEnabled(!mViewPager.isSwipingEnabled());
+      invalidateOptionsMenu();
     }
     return super.onOptionsItemSelected(item);
   }

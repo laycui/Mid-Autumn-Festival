@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +22,22 @@ import java.util.List;
 
 public class ScrollFragment extends Fragment {
 
+  MyAdapter mMyAdapter;
+
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setRetainInstance(true);
+    mMyAdapter = new MyAdapter();
+    Log.e("laycui", "ScrollFragment - onCreate");
+  }
+
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
 
     RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
     LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-    MyAdapter mMyAdapter = new MyAdapter();
     recyclerView.setAdapter(mMyAdapter);
     recyclerView.setLayoutManager(layoutManager);
 
@@ -123,7 +133,7 @@ public class ScrollFragment extends Fragment {
     }
 
     void addItems(List<Item> items) {
-      if (!mList.isEmpty()) {
+      if (!mList.isEmpty() && mList.get(mList.size() - 1).mType == ViewType.LOADING) {
         mList.remove(mList.size() - 1);
       }
       mIsLoading = false;

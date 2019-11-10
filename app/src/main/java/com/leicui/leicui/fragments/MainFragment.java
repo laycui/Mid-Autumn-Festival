@@ -30,6 +30,10 @@ import com.leicui.leicui.customview.TagViewActivity;
 import com.leicui.leicui.dagger.MyExample;
 import com.leicui.leicui.databindingrecyclerview.RecyclerViewActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -83,8 +87,7 @@ public class MainFragment extends Fragment {
 
     // Dagger:
     ((MyApplication) getActivity().getApplication()).getMyComponent().inject(this);
-    TextView textView = getView().findViewById(R.id.date_text);
-    textView.setText(String.valueOf(mMyExample.getDate()));
+    testDateFormat();
   }
 
   @OnClick(R.id.to_recycler_view)
@@ -145,6 +148,14 @@ public class MainFragment extends Fragment {
     }
 
     return false;
+  }
+
+  private void testDateFormat() {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    long now = mMyExample.getDate();
+    Date date = new Date(now);
+    TextView textView = getView().findViewById(R.id.date_text);
+    textView.setText(simpleDateFormat.format(now) + "  ---  " + date);
   }
 
   private void initBottomSheetBehavior() {
